@@ -8,6 +8,7 @@ import (
 
 	"github.com/TechBowl-japan/go-stations/db"
 	"github.com/TechBowl-japan/go-stations/handler"
+	"github.com/TechBowl-japan/go-stations/handler/middleware"
 	"github.com/TechBowl-japan/go-stations/service"
 )
 
@@ -54,15 +55,20 @@ func realMain() error {
 
 	// TODO: ここから実装を行う
 	hh := handler.NewHealthzHandler()
-	mux.Handle("/healthz", http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
+	mux.Handle("/healthz", middleware.Recovery(http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
 		hh.ServeHTTP(rw, r)
-	}))
+	})))
 
 	ts := service.NewTODOService(todoDB)
 	th := handler.NewTODOHandler(ts)
-	mux.Handle("/todos", http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
+	mux.Handle("/todos", middleware.Recovery(http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
 		th.ServeHTTP(rw, r)
-	}))
+	})))
+
+	ph := handler.NewPanicHandler()
+	mux.Handle("/do-panic", middleware.Recovery(http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
+		ph.ServeHTTP(rw, r)
+	})))
 
 	if err := http.ListenAndServe(port, mux); err != nil {
 		return err
