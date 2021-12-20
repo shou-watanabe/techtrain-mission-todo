@@ -9,12 +9,12 @@ import (
 
 type OS struct{}
 
-var osKey OS
+var OsKey OS
 
 func NewContext(r *http.Request) context.Context {
 	ctx := r.Context()
 	userAgent := r.UserAgent()
 	ua := ua.Parse(userAgent)
 
-	return context.WithValue(ctx, osKey, ua)
+	return context.WithValue(ctx, OsKey, ua.OS)
 }
