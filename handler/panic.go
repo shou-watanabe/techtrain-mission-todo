@@ -12,6 +12,7 @@ func NewPanicHandler() *PanicHandler {
 }
 
 func (h *PanicHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	// ctx := model.NewContext(r)
 
 	panic(http.StatusInternalServerError)
 }
