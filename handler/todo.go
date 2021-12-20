@@ -61,7 +61,7 @@ func (h *TODOHandler) Delete(ctx context.Context, req *model.DeleteTODORequest) 
 
 func (h *TODOHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	ctx := model.NewContext(r)
+	ctx := context.Background()
 
 	switch r.Method {
 	case http.MethodGet:

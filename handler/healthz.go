@@ -18,8 +18,6 @@ func NewHealthzHandler() *HealthzHandler {
 
 // ServeHTTP implements http.Handler interface.
 func (h *HealthzHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	// ctx := model.NewContext(r)
-
 	if r.Method == http.MethodGet {
 		hr := &model.HealthzResponse{Message: "OK"}
 
