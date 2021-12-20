@@ -8,7 +8,9 @@ func Layers(handler http.Handler) http.Handler {
 	return Recovery(
 		Context(
 			Access(
-				handler,
+				Basic(
+					handler,
+				),
 			),
 		),
 	)
