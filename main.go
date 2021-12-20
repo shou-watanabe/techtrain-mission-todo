@@ -55,13 +55,13 @@ func realMain() error {
 
 	// TODO: ここから実装を行う
 	hh := handler.NewHealthzHandler()
-	mux.Handle("/healthz", middleware.Layers(http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
+	mux.Handle("/healthz", middleware.AuthLayers(http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
 		hh.ServeHTTP(rw, r)
 	})))
 
 	ts := service.NewTODOService(todoDB)
 	th := handler.NewTODOHandler(ts)
-	mux.Handle("/todos", middleware.Layers(http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
+	mux.Handle("/todos", middleware.AuthLayers(http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
 		th.ServeHTTP(rw, r)
 	})))
 
