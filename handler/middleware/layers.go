@@ -7,7 +7,9 @@ import (
 func Layers(handler http.Handler) http.Handler {
 	return Recovery(
 		Context(
-			handler,
+			Access(
+				handler,
+			),
 		),
 	)
 }
