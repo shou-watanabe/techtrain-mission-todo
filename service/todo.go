@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"log"
 	"strings"
 
 	"github.com/TechBowl-japan/go-stations/model"
@@ -177,7 +176,7 @@ func (s *TODOService) DeleteTODO(ctx context.Context, ids []int64) error {
 	if err != nil {
 		return err
 	}
-	log.Println(delete_rows)
+
 	if delete_rows == 0 {
 		return model.ErrNotFound{}
 	}
