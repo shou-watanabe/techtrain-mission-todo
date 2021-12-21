@@ -13,3 +13,15 @@ func Layers(handler http.Handler) http.Handler {
 		),
 	)
 }
+
+func AuthLayers(handler http.Handler) http.Handler {
+	return Recovery(
+		Context(
+			Access(
+				Basic(
+					handler,
+				),
+			),
+		),
+	)
+}
