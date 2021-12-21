@@ -1,9 +1,13 @@
 package main
 
 import (
+	"context"
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
+	"sync"
+	"syscall"
 	"time"
 
 	"github.com/TechBowl-japan/go-stations/db"
@@ -70,9 +74,43 @@ func realMain() error {
 		ph.ServeHTTP(rw, r)
 	})))
 
-	if err := http.ListenAndServe(port, mux); err != nil {
-		return err
+	srv := &http.Server{
+		Addr:    defaultPort,
+		Handler: mux,
 	}
 
+	go func() {
+		if err := srv.ListenAndServe(); err != http.ErrServerClosed {
+			log.Fatalln("Server closed with error:", err)
+			return
+		}
+	}()
+
+	waitSignal()
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	if err := srv.Shutdown(ctx); err != nil {
+		log.Println("Failed to gracefully shutdown:", err)
+		return err
+	}
+	log.Println("Server shutdown")
+
 	return nil
+}
+
+func waitSignal() {
+	log.Println("start")
+	var endWaiter sync.WaitGroup
+	endWaiter.Add(1)
+	signalChannel := make(chan os.Signal, 1)
+	// signal.Notifyを使ってシグナルを待つ
+	signal.Notify(signalChannel, os.Interrupt, syscall.SIGTERM, os.Kill)
+	go func() {
+		log.Printf("SIGNAL %d received, then shutting down...\n", <-signalChannel)
+		endWaiter.Done()
+	}()
+	// シグナルが来ればここのwaitが解除される
+	endWaiter.Wait()
+	log.Println("end")
 }
