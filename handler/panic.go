@@ -12,6 +12,5 @@ func NewPanicHandler() *PanicHandler {
 }
 
 func (h *PanicHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-
 	panic(http.StatusInternalServerError)
 }

@@ -61,6 +61,8 @@ func (h *TODOHandler) Delete(ctx context.Context, req *model.DeleteTODORequest) 
 
 func (h *TODOHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
+	ctx := context.Background()
+
 	switch r.Method {
 	case http.MethodGet:
 		size := r.URL.Query().Get("size")
@@ -86,7 +88,7 @@ func (h *TODOHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 		request := &model.ReadTODORequest{Size: size64, PrevID: prevId64}
 
-		response, err := h.Read(r.Context(), request)
+		response, err := h.Read(ctx, request)
 
 		if err != nil {
 			log.Println(err)
@@ -118,7 +120,7 @@ func (h *TODOHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		response, err := h.Create(r.Context(), &request)
+		response, err := h.Create(ctx, &request)
 		if err != nil {
 			log.Println(err)
 			w.WriteHeader(http.StatusBadRequest)
@@ -154,7 +156,7 @@ func (h *TODOHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		response, err := h.Update(r.Context(), &request)
+		response, err := h.Update(ctx, &request)
 		if err != nil {
 			log.Println(err)
 			w.WriteHeader(http.StatusBadRequest)
@@ -180,7 +182,7 @@ func (h *TODOHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		response, err := h.Delete(r.Context(), &request)
+		response, err := h.Delete(ctx, &request)
 
 		switch err {
 		case nil:
